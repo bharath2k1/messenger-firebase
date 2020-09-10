@@ -1,24 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { TextField, Button } from "@material-ui/core";
+import "./App.css";
 
 function App() {
+  const [input, setinput] = useState("");
+  const [messages, setmessages] = useState(["hi"]);
+  const onButtonClick = (event) => {
+    event.preventDefault();
+    setmessages([...messages, input]);
+    setinput("");
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      <h1>messenger clone</h1>
+      <form>
+        <TextField
+          value={input}
+          onChange={(event) => setinput(event.target.value)}
+          id="standard-basic"
+          label="Enter message"
+        />
+
+        <Button
+          dissabled={!input}
+          variant="contained"
+          color="primary"
+          type="submit"
+          onClick={onButtonClick}
         >
-          Learn React
-        </a>
-      </header>
+          ENTER
+        </Button>
+      </form>
+      {messages.map((message) => (
+        <p>{message}</p>
+      ))}
     </div>
   );
 }

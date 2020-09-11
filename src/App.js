@@ -2,26 +2,47 @@ import React, { useState, useEffect } from "react";
 import { TextField, Button } from "@material-ui/core";
 import "./App.css";
 import Message from "./Message";
+import db from "./firebase";
+import firebase from "firebase";
+import FlipMove from "react-flip-move";
 
 function App() {
   const [input, setinput] = useState("");
-  const [messages, setmessages] = useState([{ username: "bunny", text: "hi" }]);
+  const [messages, setmessages] = useState([
+    { username: "bunny", message: "hi" },
+  ]);
   const [username, setusername] = useState("");
 
   const onButtonClick = (event) => {
     event.preventDefault();
-    setmessages([...messages, { username: username, text: input }]);
+    db.collection("messages").add({
+      message: input,
+      username: username,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    setmessages([...messages, { username: username, message: input }]);
     setinput("");
   };
+
+  useEffect(() => {
+    db.collection("messages")
+      .orderBy("timestamp", "desc")
+      .onSnapshot((snapshot) => {
+        setmessages(
+          snapshot.docs.map((doc) => ({ id: doc.id, message: doc.data() }))
+        );
+      });
+  }, []);
 
   useEffect(() => {
     setusername(prompt("enter your name"));
   }, []);
   return (
     <div className="App">
+      <img src="https://facebookbrand.com/wp-content/uploads/2018/09/Header-e1538151782912.png?w=100&h=100" />
       <h1>messenger clone</h1>
       <h2>hello {username}</h2>
-      <form>
+      <form className="app__form">
         <TextField
           value={input}
           onChange={(event) => setinput(event.target.value)}
@@ -39,9 +60,11 @@ function App() {
           ENTER
         </Button>
       </form>
-      {messages.map((message) => (
-        <Message username={username} message={message} />
-      ))}
+      <FlipMove>
+        {messages.map(({ id, message }) => (
+          <Message key={id} username={username} message={message} />
+        ))}
+      </FlipMove>
     </div>
   );
 }

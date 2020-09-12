@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button } from "@material-ui/core";
+import { TextField, Button, IconButton } from "@material-ui/core";
 import "./App.css";
 import Message from "./Message";
 import db from "./firebase";
 import firebase from "firebase";
 import FlipMove from "react-flip-move";
+import SendIcon from "@material-ui/icons/Send";
 
 function App() {
   const [input, setinput] = useState("");
@@ -40,8 +41,8 @@ function App() {
   return (
     <div className="App">
       <img src="https://facebookbrand.com/wp-content/uploads/2018/09/Header-e1538151782912.png?w=100&h=100" />
-      <h1>messenger clone</h1>
-      <h2>hello {username}</h2>
+      <h1>Messenger Clone</h1>
+      <h2>Welcome {username}!</h2>
       <form className="app__form">
         <TextField
           value={input}
@@ -49,6 +50,9 @@ function App() {
           id="standard-basic"
           label="Enter message"
         />
+        <IconButton disabled={!input} type="submit" onClick={onButtonClick}>
+          <SendIcon />
+        </IconButton>
 
         <Button
           disabled={!input}
